@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello World</title>
+  <meta name="description" content="Uma página Hello World com visual tech-noir." />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-0: #050814;
+      --bg-1: #08101f;
+      --panel: rgba(10, 18, 35, 0.64);
+      --panel-strong: rgba(12, 21, 43, 0.82);
+      --line: rgba(140, 190, 255, 0.18);
+      --text: #e8f1ff;
+      --muted: #9bb0cf;
+      --accent: #72d6ff;
+      --accent-2: #9a7dff;
+      --success: #4af0b2;
+      --error: #ff6a8b;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(114, 214, 255, 0.14), transparent 26%),
+        radial-gradient(circle at 80% 10%, rgba(154, 125, 255, 0.14), transparent 24%),
+        radial-gradient(circle at 50% 85%, rgba(74, 240, 178, 0.09), transparent 20%),
+        linear-gradient(135deg, var(--bg-0), var(--bg-1));
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, black 55%, transparent 100%);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 32%, rgba(255, 255, 255, 0.03) 33%, transparent 34%),
+        linear-gradient(transparent 0 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%);
+      opacity: 0.2;
+      animation: drift 22s linear infinite;
+      pointer-events: none;
+    }
+
+    .ambient {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(24px);
+      opacity: 0.55;
+      pointer-events: none;
+      animation: float 10s ease-in-out infinite;
+    }
+
+    .ambient.one {
+      width: 260px;
+      height: 260px;
+      left: 6vw;
+      top: 15vh;
+      background: rgba(114, 214, 255, 0.18);
+    }
+
+    .ambient.two {
+      width: 220px;
+      height: 220px;
+      right: 10vw;
+      bottom: 12vh;
+      background: rgba(154, 125, 255, 0.16);
+      animation-delay: -3s;
+    }
+
+    .ambient.three {
+      width: 160px;
+      height: 160px;
+      right: 42vw;
+      top: 10vh;
+      background: rgba(74, 240, 178, 0.12);
+      animation-delay: -6s;
+    }
+
+    .card {
+      position: relative;
+      width: min(720px, 100%);
+      padding: clamp(28px, 4vw, 44px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(20, 29, 53, 0.74), rgba(10, 16, 32, 0.58));
+      backdrop-filter: blur(20px) saturate(140%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 28%, transparent 72%, rgba(114, 214, 255, 0.08));
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -40% -10%;
+      height: 220px;
+      background: radial-gradient(circle, rgba(114, 214, 255, 0.18), transparent 68%);
+      filter: blur(10px);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .topline,
+    .statusline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .brand .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 20px rgba(114, 214, 255, 0.8);
+    }
+
+    .meta {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    h1 {
+      margin: 22px 0 12px;
+      position: relative;
+      z-index: 1;
+      font-size: clamp(3rem, 12vw, 6.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      text-wrap: balance;
+      text-shadow: 0 0 24px rgba(114, 214, 255, 0.16);
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 56ch;
+      position: relative;
+      z-index: 1;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      line-height: 1.7;
+    }
+
+    .panel {
+      margin-top: 28px;
+      padding: 18px 20px;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(122, 182, 255, 0.18);
+      border-radius: 20px;
+      background: rgba(5, 10, 20, 0.38);
+      display: grid;
+      gap: 12px;
+    }
+
+    .statusline {
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 0.86rem;
+      letter-spacing: 0.04em;
+    }
+
+    .chip .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 18px rgba(74, 240, 178, 0.75);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    .loader {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+
+    .state {
+      display: none;
+      margin-top: 10px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .state.success {
+      background: rgba(74, 240, 178, 0.08);
+      color: #c9ffea;
+      border-color: rgba(74, 240, 178, 0.22);
+    }
+
+    .state.error {
+      background: rgba(255, 106, 139, 0.08);
+      color: #ffd5de;
+      border-color: rgba(255, 106, 139, 0.24);
+    }
+
+    .footer {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(3, 7, 16, 0.74);
+      backdrop-filter: blur(14px);
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+      z-index: 20;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .overlay-card {
+      width: min(420px, calc(100vw - 32px));
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(140, 190, 255, 0.16);
+      background: rgba(12, 18, 35, 0.82);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+      text-align: center;
+      justify-items: center;
+    }
+
+    .overlay-card strong {
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+    }
+
+    .overlay-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .loader-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .loader-mini {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-top-color: var(--accent);
+      animation: spin 0.9s linear infinite;
+    }
+
+    body.ready .loader {
+      border-top-color: var(--success);
+    }
+
+    body.ready .chip .pulse {
+      background: var(--success);
+    }
+
+    body.error .chip .pulse {
+      background: var(--error);
+      box-shadow: 0 0 18px rgba(255, 106, 139, 0.75);
+    }
+
+    body.ready .state.success {
+      display: block;
+    }
+
+    body.error .state.error {
+      display: block;
+    }
+
+    body.ready .status .loader,
+    body.error .status .loader {
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.92); opacity: 0.8; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(0, -16px, 0) scale(1.05); }
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(-2%, -2%, 0) rotate(0deg); }
+      to { transform: translate3d(2%, 2%, 0) rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow: auto;
+      }
+
+      .scene {
+        padding: 16px;
+      }
+
+      .topline,
+      .statusline {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .card {
+        border-radius: 22px;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="overlay-card">
+      <div class="loader-row">
+        <span class="loader-mini" aria-hidden="true"></span>
+        <strong id="overlayTitle">Booting interface</strong>
+      </div>
+      <p id="overlayText">Initialising the page shell and atmospheric layers.</p>
+    </div>
+  </div>
+
+  <main class="scene">
+    <span class="ambient one" aria-hidden="true"></span>
+    <span class="ambient two" aria-hidden="true"></span>
+    <span class="ambient three" aria-hidden="true"></span>
+
+    <section class="card" aria-labelledby="title">
+      <div class="topline">
+        <div class="brand">
+          <span class="dot" aria-hidden="true"></span>
+          <span>Neo Interface</span>
+        </div>
+        <div class="meta" id="clock">--:--:--</div>
+      </div>
+
+      <h1 id="title">Hello World</h1>
+      <p class="subtitle">
+        Uma página estática, responsiva e autocontida com visual tech-noir, vidro fosco e
+        feedback visual polido para carregamento, sucesso e erro.
+      </p>
+
+      <div class="panel" role="status" aria-live="polite">
+        <div class="statusline">
+          <div class="status">
+            <span class="loader" id="loader" aria-hidden="true"></span>
+            <span class="chip"><span class="pulse" aria-hidden="true"></span><span id="statusText">Loading</span></span>
+          </div>
+          <div class="meta" id="detailText">Awaiting render</div>
+        </div>
+
+        <div class="state success" id="successState">
+          System online. The Hello World view is live and responsive.
+        </div>
+        <div class="state error" id="errorState">
+          The interface encountered an error while starting. Reload the page to retry.
+        </div>
+      </div>
+
+      <div class="footer">
+        <span class="kbd">HTML</span>
+        <span class="kbd">CSS</span>
+        <span class="kbd">JavaScript</span>
+        <span class="kbd">Glassmorphism</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const overlay = document.getElementById('overlay');
+      const overlayTitle = document.getElementById('overlayTitle');
+      const overlayText = document.getElementById('overlayText');
+      const statusText = document.getElementById('statusText');
+      const detailText = document.getElementById('detailText');
+      const clock = document.getElementById('clock');
+
+      const setClock = () => {
+        const now = new Date();
+        clock.textContent = new Intl.DateTimeFormat('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).format(now);
+      };
+
+      const boot = async () => {
+        try {
+          statusText.textContent = 'Loading';
+          detailText.textContent = 'Rendering atmospheric layers';
+          setClock();
+          window.setInterval(setClock, 1000);
+
+          const particles = 18;
+          for (let i = 0; i < particles; i += 1) {
+            const dot = document.createElement('span');
+            const size = 2 + Math.random() * 4;
+            dot.style.position = 'fixed';
+            dot.style.left = `${Math.random() * 100}vw`;
+            dot.style.top = `${Math.random() * 100}vh`;
+            dot.style.width = `${size}px`;
+            dot.style.height = `${size}px`;
+            dot.style.borderRadius = '999px';
+            dot.style.background = i % 3 === 0 ? 'rgba(114, 214, 255, 0.8)' : i % 3 === 1 ? 'rgba(154, 125, 255, 0.8)' : 'rgba(74, 240, 178, 0.8)';
+            dot.style.boxShadow = '0 0 16px currentColor';
+            dot.style.opacity = String(0.2 + Math.random() * 0.45);
+            dot.style.pointerEvents = 'none';
+            dot.style.zIndex = '0';
+            dot.animate(
+              [
+                { transform: 'translate3d(0, 0, 0) scale(1)' },
+                { transform: `translate3d(${(Math.random() - 0.5) * 60}px, ${(Math.random() - 0.5) * 60}px, 0) scale(${1 + Math.random() * 0.6})` },
+                { transform: 'translate3d(0, 0, 0) scale(1)' }
+              ],
+              {
+                duration: 7000 + Math.random() * 7000,
+                iterations: Infinity,
+                direction: 'alternate',
+                easing: 'ease-in-out'
+              }
+            );
+            document.body.appendChild(dot);
+          }
+
+          await new Promise((resolve) => window.setTimeout(resolve, 1100));
+
+          document.body.classList.add('ready');
+          statusText.textContent = 'Success';
+          detailText.textContent = 'Hello World rendered successfully';
+          overlayTitle.textContent = 'Interface ready';
+          overlayText.textContent = 'The page loaded cleanly and is now in its active state.';
+          window.setTimeout(() => overlay.classList.add('hidden'), 650);
+        } catch (error) {
+          console.error(error);
+          document.body.classList.add('error');
+          statusText.textContent = 'Error';
+          detailText.textContent = 'Startup failed';
+          overlayTitle.textContent = 'Startup error';
+          overlayText.textContent = 'The interface could not complete initialisation.';
+          overlay.classList.add('hidden');
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', boot, { once: true });
+    })();
+  </script>
+</body>
+</html>
