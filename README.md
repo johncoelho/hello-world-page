@@ -1,6 +1,6 @@
 # hello-world-page
 
-Gerar uma página HTML simples com o texto 'Hello World'
+Atualizar a página 'hello-world-page' para incluir um formulário de contato e salvar os dados no Supabase.
 
 ## Stack
 
